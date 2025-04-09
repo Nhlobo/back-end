@@ -1,6 +1,18 @@
 <?php
 // process_payment.php - Process the payment through PayFast
 
+// At the beginning of your PHP backend file (process_payment.php), add:
+header("Access-Control-Allow-Origin: https://nhlobo.github.io"); 
+header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow Content-Type and Authorization headers
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Allow GET, POST, and OPTIONS requests
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
