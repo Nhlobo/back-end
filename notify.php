@@ -16,11 +16,11 @@ if (verifyPayment($data)) {
 }
 
 function verifyPayment($data) {
-    // Implement your payment verification logic here
-    return true; // Placeholder
+    // In production, use signature and source IP validation
+    return isset($data['payment_status']) && $data['payment_status'] === 'COMPLETE';
 }
 
 function updateOrderStatus($paymentId, $status) {
-    // Implement your order status update logic here
+    $log = "Payment ID $paymentId marked as $status\n";
+    file_put_contents('orders.txt', $log, FILE_APPEND);
 }
-?>
