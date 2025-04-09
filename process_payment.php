@@ -1,15 +1,19 @@
 <?php
-// Allow requests from your GitHub Pages frontend
+// Allow requests from your frontend domain (e.g., https://nhlobo.github.io)
 header("Access-Control-Allow-Origin: https://nhlobo.github.io");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header('Content-Type: application/json');
+// Allow specific methods (GET, POST)
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+// Allow specific headers if needed (e.g., for authentication)
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// Handle OPTIONS preflight request (for complex requests)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0); // No need to process further
 }
+
+// Your regular PHP script follows...
+?>
+
 // Get payment data from frontend
 $data = json_decode(file_get_contents('php://input'), true);
 
