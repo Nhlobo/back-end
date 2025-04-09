@@ -5,8 +5,8 @@ header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$merchant_id = $data['merchant_id'];
-$merchant_key = $data['merchant_key'];
+$merchant_id = getenv('MERCHANT_ID');
+$merchant_key = getenv('MERCHANT_KEY');
 $amount = $data['amount'];
 $return_url = $data['return_url'];
 $cancel_url = $data['cancel_url'];
