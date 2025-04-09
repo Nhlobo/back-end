@@ -1,41 +1,32 @@
 <?php
-// Allow requests from your frontend domain (replace this with your actual frontend URL)
-header("Access-Control-Allow-Origin: https://nhlobo.github.io/firt-try/"); 
-// Allow methods like POST, GET, OPTIONS (adjust as needed)
+// CORS Headers
+header("Access-Control-Allow-Origin: https://nhlobo.github.io/firt-try/");  // Allow all domains or specify your front-end domain
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-// Allow specific headers that might be needed (e.g., Content-Type, Authorization, etc.)
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type");
 
-// Handle OPTIONS request (preflight request for CORS)
+// Handle preflight request (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    exit(0); // No need to process further
+    exit(0);
 }
 
+// Process the sign-up (Example: handle form data and store in DB)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Collect user input
+    // Collect form data
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Simple validation
-    if (empty($username) || empty($email) || empty($password)) {
-        die("All fields are required.");
-    }
-
-    // Hash password for storage
+    // Process and save to database (this is just a mock example)
+    // For security, never store passwords as plain text, always hash them before saving
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Connect to the database (replace with your own credentials)
-    $db = new PDO('mysql:host=localhost;dbname=your_database', 'root', '');
+    // Assume user was successfully saved
+    $response = [
+        'success' => true,
+        'message' => 'User registered successfully!'
+    ];
 
-    // Insert into the database
-    $stmt = $db->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->execute([$username, $email, $hashed_password]);
-
-    // Send email verification (assuming simple email sending logic)
-    $verification_link = "https://yourwebsite.com/verify.php?email=$email&token=" . md5($email);
-    mail($email, "Verify Your Email", "Click this link to verify your email: $verification_link");
-
-    echo "Registration successful! Please check your email to verify your account.";
+    echo json_encode($response);  // Return JSON response
+    exit;
 }
 ?>
