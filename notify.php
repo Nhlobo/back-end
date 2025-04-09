@@ -1,14 +1,14 @@
 <?php
-// notify.php
-
 $notification = file_get_contents('php://input');
 file_put_contents('payment_log.txt', $notification . "\n", FILE_APPEND);
 
 parse_str($notification, $data);
 
+// For now, just log the data and check the status
 if (verifyPayment($data)) {
+    // Update order status in your system (example)
     updateOrderStatus($data['m_payment_id'], 'paid');
-    echo "OK";
+    echo "OK";  // Send confirmation back to PayFast
 } else {
     file_put_contents('payment_log.txt', "Invalid payment notification\n", FILE_APPEND);
     http_response_code(400);
@@ -16,11 +16,11 @@ if (verifyPayment($data)) {
 }
 
 function verifyPayment($data) {
-    // In production, use signature and source IP validation
-    return isset($data['payment_status']) && $data['payment_status'] === 'COMPLETE';
+    // Implement your payment verification logic here
+    return true; // Placeholder, replace with actual logic
 }
 
 function updateOrderStatus($paymentId, $status) {
-    $log = "Payment ID $paymentId marked as $status\n";
-    file_put_contents('orders.txt', $log, FILE_APPEND);
+    // Implement your order status update logic here
 }
+?>
