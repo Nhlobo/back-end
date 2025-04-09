@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$merchant_id = $data['merchant_id:15465428'];
-$merchant_key = $data['merchant_key:0cyrfu755y7bg'];
+$merchant_id = "15465428";
+$merchant_key = "0cyrfu755y7bg";
 $amount = $data['amount'];
 $return_url = $data['return_url'];
 $cancel_url = $data['cancel_url'];
