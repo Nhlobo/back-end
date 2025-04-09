@@ -1,5 +1,15 @@
 <?php
-// sign_up_process.php - Process the user registration
+// Allow requests from your frontend domain (replace this with your actual frontend URL)
+header("Access-Control-Allow-Origin: https://nhlobo.github.io"); 
+// Allow methods like POST, GET, OPTIONS (adjust as needed)
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+// Allow specific headers that might be needed (e.g., Content-Type, Authorization, etc.)
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+// Handle OPTIONS request (preflight request for CORS)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0); // No need to process further
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect user input
