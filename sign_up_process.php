@@ -1,6 +1,6 @@
 <?php
 // Allow requests from your frontend domain (replace this with your actual frontend URL)
-header("Access-Control-Allow-Origin: https://nhlobo.github.io"); 
+header("Access-Control-Allow-Origin:  https://nhlobo.github.io/firt-try/"); 
 // Allow methods like POST, GET, OPTIONS (adjust as needed)
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 // Allow specific headers that might be needed (e.g., Content-Type, Authorization, etc.)
