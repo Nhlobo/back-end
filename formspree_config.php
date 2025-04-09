@@ -2,7 +2,7 @@
 // formspree_config.php
 
 function sendOrderConfirmation($email, $order_details) {
-    $url = 'https://formspree.io/f/your_formspree_endpoint';
+    $url = 'https://formspree.io/f/xwpkkvnk';
     $data = [
         'name' => 'Customer Name',  // Name of the customer
         'email' => $email,
