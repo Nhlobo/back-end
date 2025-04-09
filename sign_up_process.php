@@ -1,6 +1,6 @@
 <?php
 // CORS Headers
-header("Access-Control-Allow-Origin: https://nhlobo.github.io/firt-try/");  // Allow all domains or specify your front-end domain
+header("Access-Control-Allow-Origin: https://nhlobo.github.io");  // Allow all domains or specify your front-end domain
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
