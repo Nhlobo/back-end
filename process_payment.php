@@ -11,9 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0); // No need to process further
 }
 
-// Your regular PHP script follows...
-?>
-
 // Get payment data from frontend
 $data = json_decode(file_get_contents('php://input'), true);
 
