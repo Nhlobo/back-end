@@ -1,8 +1,8 @@
 <?php
-header("Access-Control-Allow-Origin: https://your-github-pages-url");
+// Allow requests from your GitHub Pages URL
+header("Access-Control-Allow-Origin: https://nhlobo.github.io");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-
 
 $passPhrase = 'jt7NOE43FZPn'; // Test passphrase
 $data = [
@@ -10,9 +10,9 @@ $data = [
     'merchant_key' => '46f0cd694581a', // Test merchant key
     'amount' => number_format(10.00, 2, '.', ''),
     'item_name' => 'Test Product',
-    'return_url' => 'https://your-github-pages-url/return.html',
-    'cancel_url' => 'https://your-github-pages-url/cancel.html',
-    'notify_url' => 'https://your-backend-url.onrender.com/notify.php',
+    'return_url' => 'https://nhlobo.github.io/return.html',
+    'cancel_url' => 'https://nhlobo.github.io/cancel.html',
+    'notify_url' => 'https://back-end-6-bt7b.onrender.com/notify.php',
     'name_first' => 'First Name',
     'name_last' => 'Last Name',
     'email_address' => 'test@test.com',
