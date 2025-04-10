@@ -1,4 +1,9 @@
 <?php
+header("Access-Control-Allow-Origin: https://your-github-pages-url");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+
 header('HTTP/1.0 200 OK');
 flush();
 
