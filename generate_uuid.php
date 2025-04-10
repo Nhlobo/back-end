@@ -6,8 +6,8 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $passPhrase = 'jt7NOE43FZPn'; // Test passphrase
 $data = [
-    'merchant_id' => '10000100', // Test merchant ID
-    'merchant_key' => '46f0cd694581a', // Test merchant key
+    'merchant_id' => '15465428', // Test merchant ID
+    'merchant_key' => '0cyrfu755y7bg', // Test merchant key
     'amount' => number_format(10.00, 2, '.', ''),
     'item_name' => 'Test Product',
     'return_url' => 'https://nhlobo.github.io/return.html',
