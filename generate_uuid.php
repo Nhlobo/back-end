@@ -6,12 +6,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $passPhrase = 'jt7NOE43FZPn'; // Test passphrase
 $data = [
-    'merchant_id' => '15465428', // Test merchant ID
-    'merchant_key' => '0cyrfu755y7bg', // Test merchant key
+    'merchant_id' => '15465428', // Your merchant ID
+    'merchant_key' => '0cyrfu755y7bg', // Your merchant key
     'amount' => number_format(10.00, 2, '.', ''),
     'item_name' => 'Test Product',
-    'return_url' => 'https://nhlobo.github.io/return.html',
-    'cancel_url' => 'https://nhlobo.github.io/cancel.html',
+    'return_url' => 'https://nhlobo.github.io/front-end/return.html',
+    'cancel_url' => 'https://nhlobo.github.io/front-end/cancel.html',
     'notify_url' => 'https://back-end-6-bt7b.onrender.com/notify.php',
     'name_first' => 'First Name',
     'name_last' => 'Last Name',
