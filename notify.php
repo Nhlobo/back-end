@@ -1,48 +1,50 @@
 <?php
-// notify.php - Handle PayFast notifications and confirm the order
+header('HTTP/1.0 200 OK');
+flush();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $paymentData = $_POST;  // Receive payment data from PayFast
+$pfData = $_POST;
+$passPhrase = 'jt7NOE43FZPn';
 
-    // Log the payment notification for debugging
-    $notification = file_get_contents('php://input');
-    file_put_contents('payment_log.txt', $notification . "\n", FILE_APPEND);
+function pfValidSignature($pfData, $pfParamString, $pfPassphrase = null) {
+    $tempParamString = $pfPassphrase ? $pfParamString . '&passphrase=' . urlencode($pfPassphrase) : $pfParamString;
+    $signature = md5($tempParamString);
+    return $pfData['signature'] === $signature;
+}
 
-    // Validate payment (you may need to verify the payment with PayFast's API)
-    if (verifyPayment($paymentData)) {
-        // Update order status in your system (example)
-        updateOrderStatus($paymentData['m_payment_id'], 'paid');
+function pfValidIP() {
+    $validHosts = ['www.payfast.co.za', 'sandbox.payfast.co.za', 'w1w.payfast.co.za', 'w2w.payfast.co.za'];
+    $validIps = [];
+    foreach ($validHosts as $pfHostname) {
+        $ips = gethostbynamel($pfHostname);
+        if ($ips !== false) {
+            $validIps = array_merge($validIps, $ips);
+        }
+    }
+    $validIps = array_unique($validIps);
+    $referrerIp = gethostbyname(parse_url($_SERVER['HTTP_REFERER'])['host']);
+    return in_array($referrerIp, $validIps, true);
+}
 
-        // Send email confirmation to customer
-        $customer_email = $paymentData['email'];
-        $customer_name = $paymentData['name'];
-        $order_id = rand(1000, 9999);  // Example order ID
-        $subject = "Order Confirmation";
-        $message = "Dear $customer_name, \n\nYour order ID is $order_id. Your order has been successfully placed.";
-        mail($customer_email, $subject, $message);
+foreach ($pfData as $key => $val) {
+    $pfData[$key] = stripslashes($val);
+}
 
-        // Send order details to the seller
-        $seller_email = "seller@example.com";
-        $subject_seller = "New Order to Fulfill";
-        $message_seller = "New order from $customer_name. Order ID: $order_id.";
-        mail($seller_email, $subject_seller, $message_seller);
-
-        echo "OK";  // Send confirmation back to PayFast
-    } else {
-        file_put_contents('payment_log.txt', "Invalid payment notification\n", FILE_APPEND);
-        http_response_code(400);
-        echo "Invalid payment notification";
+$pfParamString = '';
+foreach ($pfData as $key => $val) {
+    if ($key !== 'signature') {
+        $pfParamString .= $key . '=' . urlencode($val) . '&';
     }
 }
+$pfParamString = substr($pfParamString, 0, -1);
 
-function verifyPayment($data) {
-    // Implement your payment verification logic here
-    // Example: Validate signature with PayFast's verification endpoint
-    return true; // Placeholder, replace with actual logic
-}
+$check1 = pfValidSignature($pfData, $pfParamString, $passPhrase);
+$check2 = pfValidIP();
 
-function updateOrderStatus($paymentId, $status) {
-    // Implement your order status update logic here (e.g., database update)
-    file_put_contents('payment_log.txt', "Updated order $paymentId to $status\n", FILE_APPEND);
+if ($check1 && $check2) {
+    // Payment is valid, update your order status
+    echo "Payment successful";
+} else {
+    // Payment is invalid, log for investigation
+    echo "Payment failed";
 }
 ?>
