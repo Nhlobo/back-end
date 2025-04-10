@@ -4,7 +4,6 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
 
-<?php
 $passPhrase = 'jt7NOE43FZPn'; // Test passphrase
 $data = [
     'merchant_id' => '10000100', // Test merchant ID
