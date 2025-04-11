@@ -3,7 +3,7 @@ $merchant_id = "10000100";
 $merchant_key = "46f0cd694581a";
 $return_url = "https://nhlobo.github.io/front-end/return.html";
 $cancel_url = "https://nhlobo.github.io/front-end/cancel_url";
-$notify_url = "https://nhlobo.github.io/front-end/notify.php";
+$notify_url = "https://keep-trying-tuv0.onrender.com/notify.php";
 $item_name = "Sample Product";
 $amount = "10.00";
 
