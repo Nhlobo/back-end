@@ -1,9 +1,9 @@
 <?php
 $merchant_id = "10000100";
 $merchant_key = "46f0cd694581a";
-$return_url = "https://your-frontend-link.github.io/return.html";
-$cancel_url = "https://your-frontend-link.github.io/cancel.html";
-$notify_url = "https://your-backend-service.onrender.com/notify.php";
+$return_url = "https://nhlobo.github.io/front-end/return.html";
+$cancel_url = "https://nhlobo.github.io/front-end/cancel_url";
+$notify_url = "https://nhlobo.github.io/front-end/notify.php";
 $item_name = "Sample Product";
 $amount = "10.00";
 
