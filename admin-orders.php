@@ -9,12 +9,14 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
   exit;
 }
 
+rate_limit('admin_orders_' . $_SESSION['user']['id'], 100, 60); // 100 requests per minute
+
 try {
   $stmt = $conn->query("SELECT * FROM orders ORDER BY id DESC");
   $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
   echo json_encode($orders);
 } catch (Exception $e) {
   http_response_code(500);
-  echo json_encode(["error" => "Internal Server Error: " . $e->getMessage()]);
+  echo json_encode(["error" => "Internal Server Error"]);
 }
 ?>
