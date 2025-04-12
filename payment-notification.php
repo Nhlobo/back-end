@@ -1,8 +1,16 @@
 <?php
+require 'security.php';
+
 $notification = file_get_contents('php://input');
 file_put_contents('payment_log.txt', $notification . "\n", FILE_APPEND);
 
 parse_str($notification, $data);
+
+if (!isset($data['m_payment_id'])) {
+  http_response_code(400);
+  echo json_encode(["error" => "Bad Request: Missing payment ID."]);
+  exit;
+}
 
 // For now, just log the data and check the status
 if (verifyPayment($data)) {
