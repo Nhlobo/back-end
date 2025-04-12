@@ -9,6 +9,8 @@ if (!isset($_SESSION['user'])) {
   exit;
 }
 
+rate_limit('user_orders_' . $_SESSION['user']['id'], 100, 60); // 100 requests per minute
+
 $user_id = $_SESSION['user']['id'];
 
 try {
@@ -18,6 +20,6 @@ try {
   echo json_encode($orders);
 } catch (Exception $e) {
   http_response_code(500);
-  echo json_encode(["error" => "Internal Server Error: " . $e->getMessage()]);
+  echo json_encode(["error" => "Internal Server Error"]);
 }
 ?>
