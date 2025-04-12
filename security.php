@@ -41,4 +41,12 @@ function rate_limit($key, $max_requests, $interval) {
     exit;
   }
 }
+
+function hash_password($password) {
+  return password_hash($password, PASSWORD_BCRYPT);
+}
+
+function verify_password($password, $hash) {
+  return password_verify($password, $hash);
+}
 ?>
