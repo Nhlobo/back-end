@@ -17,4 +17,28 @@ function validate_input($data, $type) {
       return false;
   }
 }
+
+function generate_csrf_token() {
+  if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+  }
+  return $_SESSION['csrf_token'];
+}
+
+function verify_csrf_token($token) {
+  return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+function rate_limit($key, $max_requests, $interval) {
+  $redis = new Redis();
+  $redis->connect('127.0.0.1', 6379);
+  $current = $redis->incr($key);
+  if ($current == 1) {
+    $redis->expire($key, $interval);
+  } elseif ($current > $max_requests) {
+    http_response_code(429);
+    echo json_encode(["error" => "Too Many Requests"]);
+    exit;
+  }
+}
 ?>
