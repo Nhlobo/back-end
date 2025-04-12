@@ -1,4 +1,6 @@
 <?php
+require 'security.php';
+
 // Allow requests from your GitHub Pages frontend
 header("Access-Control-Allow-Origin: https://nhlobo.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -12,15 +14,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
+if (!isset($data['amount']) || !isset($data['return_url']) || !isset($data['cancel_url']) || !isset($data['notify_url']) || !isset($data['csrf_token'])) {
+  http_response_code(400);
+  echo json_encode(["error" => "Bad Request: Missing required parameters."]);
+  exit;
+}
+
+if (!verify_csrf_token($data['csrf_token'])) {
+  http_response_code(403);
+  echo json_encode(["error" => "CSRF token validation failed."]);
+  exit;
+}
+
+$amount = sanitize_input($data['amount']);
+$return_url = sanitize_input($data['return_url']);
+$cancel_url = sanitize_input($data['cancel_url']);
+$notify_url = sanitize_input($data['notify_url']);
+
+if (!validate_input($amount, 'float')) {
+  http_response_code(400);
+  echo json_encode(["error" => "Bad Request: Invalid amount."]);
+  exit;
+}
+
+if (!validate_input($return_url, 'url') || !validate_input($cancel_url, 'url') || !validate_input($notify_url, 'url')) {
+  http_response_code(400);
+  echo json_encode(["error" => "Bad Request: Invalid URL."]);
+  exit;
+}
 
 // Use test PayFast credentials
 $merchant_id = "10000100";  // Sandbox Merchant ID
 $merchant_key = "46f0cd694581a";  // Sandbox Merchant Key
-
-$amount = $data['amount'];
-$return_url = $data['return_url'];
-$cancel_url = $data['cancel_url'];
-$notify_url = $data['notify_url'];
 
 $payfast_url = "https://sandbox.payfast.co.za/eng/process";
 
