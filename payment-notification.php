@@ -1,4 +1,9 @@
 <?php
+// Allow frontend from GitHub Pages to access backend
+header("Access-Control-Allow-Origin: https://your-github-username.github.io");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+
 require 'security.php';
 
 $notification = file_get_contents('php://input');
