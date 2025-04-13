@@ -1,4 +1,9 @@
 <?php
+// Allow frontend from GitHub Pages to access backend
+header("Access-Control-Allow-Origin: https://your-github-username.github.io");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+
 session_start();
 include 'db.php';
 
@@ -14,33 +19,3 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 $orders = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-  <title>User Dashboard</title>
-  <link rel="stylesheet" href="../frontend/style.css">
-</head>
-<body>
-  <div class="container">
-    <h2>Welcome, <?php echo $_SESSION['fullname']; ?>!</h2>
-    <p>Your Recent Orders:</p>
-    <table>
-      <tr>
-        <th>#</th>
-        <th>Order ID</th>
-        <th>Status</th>
-        <th>Date</th>
-      </tr>
-      <?php foreach ($orders as $index => $order): ?>
-      <tr>
-        <td><?= $index + 1 ?></td>
-        <td><?= $order['id'] ?></td>
-        <td><?= ucfirst($order['status']) ?></td>
-        <td><?= $order['created_at'] ?></td>
-      </tr>
-      <?php endforeach; ?>
-    </table>
-    <a href="../backend/logout.php" class="btn-logout">Logout</a>
-  </div>
-</body>
-</html>
