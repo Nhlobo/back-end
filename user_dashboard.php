@@ -1,14 +1,17 @@
 <?php
 session_start();
-require 'db.php';
+$timeout = 900; // 15 minutes
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header("Location: ../frontend/login.html");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$query = $conn->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC");
-$query->execute([$user_id]);
-$orders = $query->fetchAll(PDO::FETCH_ASSOC);
+if (time() - $_SESSION['last_login_time'] > $timeout) {
+    session_destroy();
+    header("Location: ../frontend/login.html?timeout=true");
+    exit();
+} else {
+    $_SESSION['last_login_time'] = time();
+}
 ?>
