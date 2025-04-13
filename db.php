@@ -1,12 +1,12 @@
 <?php
-$dsn = "mysql:host=localhost;dbname=ecommerce;charset=utf8mb4";
-$username = "root";
-$password = "";
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db = "ecommerce";
 
-try {
-  $conn = new PDO($dsn, $username, $password);
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (Exception $e) {
-  die("DB connection failed: " . $e->getMessage());
+$conn = new mysqli($host, $user, $pass, $db);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>
