@@ -1,9 +1,8 @@
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS order_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT,
-  full_name VARCHAR(255),
-  item_name VARCHAR(255),
-  order_type ENUM('Delivery', 'Collection'),
-  status ENUM('Pending', 'Collected', 'Delivered', 'Cancelled') DEFAULT 'Pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  order_id INT NOT NULL,
+  product_name VARCHAR(100),
+  quantity INT,
+  price DECIMAL(10,2),
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
