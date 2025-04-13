@@ -1,33 +1,26 @@
 <?php
-session_start();
-require 'db.php';
-require 'security.php';
+include 'db.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
-if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
-  http_response_code(400);
-  echo json_encode(["error" => "Bad Request: Missing required parameters."]);
-  exit;
-}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $fullname = htmlspecialchars($_POST['fullname']);
+    $email = htmlspecialchars($_POST['email']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-$username = sanitize_input($data['username']);
-$email = sanitize_input($data['email']);
-$password = sanitize_input($data['password']);
+    $check = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $check->bind_param("s", $email);
+    $check->execute();
+    $result = $check->get_result();
 
-if (!validate_input($email, 'email')) {
-  http_response_code(400);
-  echo json_encode(["error" => "Bad Request: Invalid email."]);
-  exit;
-}
-
-$hashed_password = hash_password($password);
-
-try {
-  $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-  $stmt->execute([$username, $email, $hashed_password]);
-  echo json_encode(["success" => true, "message" => "User registered successfully."]);
-} catch (Exception $e) {
-  http_response_code(500);
-  echo json_encode(["error" => "Internal Server Error: " . $e->getMessage()]);
+    if ($result->num_rows > 0) {
+        echo "Email already registered.";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $fullname, $email, $password);
+        if ($stmt->execute()) {
+            echo "success";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    }
 }
 ?>
