@@ -1,31 +1,27 @@
 <?php
-// Allow frontend from GitHub Pages to access backend
-header("Access-Control-Allow-Origin: https://your-github-username.github.io");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-
 include 'db.php';
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fullname = htmlspecialchars($_POST['fullname']);
-    $email = htmlspecialchars($_POST['email']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+$data = json_decode(file_get_contents("php://input"), true);
+$fullname = htmlspecialchars($data['name']);
+$email = htmlspecialchars($data['email']);
+$password = password_hash($data['password'], PASSWORD_BCRYPT);
 
-    $check = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $check->bind_param("s", $email);
-    $check->execute();
-    $result = $check->get_result();
+$check = $conn->prepare("SELECT * FROM users WHERE email = ?");
+$check->bind_param("s", $email);
+$check->execute();
+$result = $check->get_result();
 
-    if ($result->num_rows > 0) {
-        echo "Email already registered.";
+if ($result->num_rows > 0) {
+    echo json_encode(["error" => "Email already registered."]);
+} else {
+    $stmt = $conn->prepare("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $fullname, $email, $password);
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true]);
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $fullname, $email, $password);
-        if ($stmt->execute()) {
-            echo "success";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
+        echo json_encode(["error" => "Error: " . $stmt->error]);
     }
 }
 ?>
