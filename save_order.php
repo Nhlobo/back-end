@@ -1,26 +1,25 @@
 <?php
-// backend/save_order.php
 include 'db.php';
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);
-$fullname = $data['customer']['fullname'];
-$address = $data['customer']['address'];
-$email = $data['customer']['email'];
-$cart = $data['cart'];
+$user_id = $data["user_id"];
+$cart = $data["cart"];
+$date = date("Y-m-d");
 
-// Save order
-$stmt = $conn->prepare("INSERT INTO orders (fullname, address, email, order_date) VALUES (?, ?, ?, NOW())");
-$stmt->bind_param("sss", $fullname, $address, $email);
-$stmt->execute();
-$order_id = $stmt->insert_id;
+$conn->begin_transaction();
 
-// Save each cart item
-$item_stmt = $conn->prepare("INSERT INTO order_items (order_id, product_name, quantity, price) VALUES (?, ?, ?, ?)");
-
-foreach ($cart as $item) {
-  $item_stmt->bind_param("isid", $order_id, $item['name'], $item['quantity'], $item['price']);
-  $item_stmt->execute();
+try {
+    foreach ($cart as $product_id => $qty) {
+        $stmt = $conn->prepare("INSERT INTO orders (user_id, product_id, quantity, order_date, status) VALUES (?, ?, ?, ?, 'Pending')");
+        $stmt->bind_param("iiis", $user_id, $product_id, $qty, $date);
+        $stmt->execute();
+    }
+    $conn->commit();
+    echo json_encode(["message" => "Order placed successfully"]);
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(["error" => "Order placement failed"]);
 }
-
-echo "✅ Order placed successfully!";
 ?>
