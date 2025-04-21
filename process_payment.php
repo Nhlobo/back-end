@@ -41,9 +41,8 @@ if (!validate_input($return_url, 'url') || !validate_input($cancel_url, 'url') |
   exit;
 }
 
-// Use your PayFast credentials
-$merchant_id = "15465428";
-$merchant_key = "Ocyrfu755y7bg";
+$merchant_id = getenv('15465428');
+$merchant_key = getenv('Ocyrfu755y7bg');
 
 $payfast_url = "https://www.payfast.co.za/eng/process";
 
