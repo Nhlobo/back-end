@@ -1,13 +1,11 @@
 <?php
 require 'security.php';
 
-// Allow requests from your GitHub Pages frontend
 header("Access-Control-Allow-Origin: https://nhlobo.github.io");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header('Content-Type: application/json');
 
-// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -43,9 +41,8 @@ if (!validate_input($return_url, 'url') || !validate_input($cancel_url, 'url') |
   exit;
 }
 
-// Use test PayFast credentials
-$merchant_id = "10000100";  // Sandbox Merchant ID
-$merchant_key = "46f0cd694581a";  // Sandbox Merchant Key
+$merchant_id = "10000100";
+$merchant_key = "46f0cd694581a";
 
 $payfast_url = "https://sandbox.payfast.co.za/eng/process";
 
