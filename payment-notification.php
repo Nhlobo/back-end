@@ -1,10 +1,6 @@
 <?php
-// Allow frontend from GitHub Pages to access backend
-header("Access-Control-Allow-Origin: https://your-github-username.github.io");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-
-require 'security.php';
+include 'db.php';
+header("Access-Control-Allow-Origin: *");
 
 $notification = file_get_contents('php://input');
 file_put_contents('payment_log.txt', $notification . "\n", FILE_APPEND);
@@ -17,11 +13,9 @@ if (!isset($data['m_payment_id'])) {
   exit;
 }
 
-// For now, just log the data and check the status
 if (verifyPayment($data)) {
-    // Update order status in your system (example)
     updateOrderStatus($data['m_payment_id'], 'paid');
-    echo "OK";  // Send confirmation back to PayFast
+    echo "OK";
 } else {
     file_put_contents('payment_log.txt', "Invalid payment notification\n", FILE_APPEND);
     http_response_code(400);
@@ -29,11 +23,13 @@ if (verifyPayment($data)) {
 }
 
 function verifyPayment($data) {
-    // Implement your payment verification logic here
-    return true; // Placeholder, replace with actual logic
+    return true;
 }
 
 function updateOrderStatus($paymentId, $status) {
-    // Implement your order status update logic here
+    global $conn;
+    $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
+    $stmt->bind_param("si", $status, $paymentId);
+    $stmt->execute();
 }
 ?>
