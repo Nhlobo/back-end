@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My E-Commerce Store</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    .product { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .cart { background: #f9f9f9; padding: 10px; margin-top: 20px; }
+    input { padding: 8px; margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>E-Commerce Store</h1>
+  
+  <div id="auth">
+    <h2>Login / Register</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password (min 6 chars)">
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
+    <p id="authMessage"></p>
+  </div>
+
+  <div id="products">
+    <h2>Products</h2>
+    <div id="productList"></div>
+  </div>
+
+  <div class="cart" id="cart">
+    <h2>Cart</h2>
+    <div id="cartItems"></div>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <script>
+    // Configure this with your deployed backend API URL
+    const apiUrl = 'http://localhost:3000'; // Replace with your Render API URL
+    let token = localStorage.getItem('token');
+    let cart = [];
+
+    async function register() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch(`${apiUrl}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      document.getElementById('authMessage').textContent = data.message || data.error;
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch(`${apiUrl}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        localStorage.setItem('token', token);
+        document.getElementById('authMessage').textContent = 'Login successful!';
+        loadProducts();
+      } else {
+        document.getElementById('authMessage').textContent = data.error;
+      }
+    }
+
+    async function loadProducts() {
+      const res = await fetch(`${apiUrl}/products`);
+      const products = await res.json();
+      const list = document.getElementById('productList');
+      list.innerHTML = products.map(p => `
+        <div class="product">
+          <h3>${p.name}</h3>
+          <p>${p.description}</p>
+          <p>Price: $${p.price}</p>
+          <button onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Add to Cart</button>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(id, name, price) {
+      cart.push({ id, name, price, quantity: 1 });
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartDiv = document.getElementById('cartItems');
+      cartDiv.innerHTML = cart.map((item, idx) => `
+        <p>${item.name} - $${item.price} x ${item.quantity}</p>
+      `).join('');
+    }
+
+    async function checkout() {
+      if (!token) {
+        alert('Please login first');
+        return;
+      }
+      if (cart.length === 0) {
+        alert('Cart is empty');
+        return;
+      }
+      const res = await fetch(`${apiUrl}/orders`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ productId: cart[0].id, quantity: cart[0].quantity })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error);
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

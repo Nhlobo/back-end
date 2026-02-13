@@ -1,4 +1,0 @@
-# .gitignore
-node_modules/
-payment_log.txt
-.env
