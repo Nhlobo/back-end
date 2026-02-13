@@ -31,13 +31,28 @@ const authenticateToken = (req, res, next) => {
 
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password || password.length < 6) return res.status(400).json({ error: 'Valid email and password (min 6 chars) required' });
+  
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Valid email required' });
+  }
+  
+  if (!password || password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+  
   const hash = await bcrypt.hash(password, 10);
   try {
     await pool.query('INSERT INTO users (email, password_hash) VALUES ($1, $2)', [email, hash]);
     res.status(201).json({ message: 'User registered' });
   } catch (err) {
-    res.status(500).json({ error: 'Registration failed (email may exist)' });
+    // Check if error is due to duplicate email
+    if (err.code === '23505') {
+      res.status(409).json({ error: 'Email already registered' });
+    } else {
+      res.status(500).json({ error: 'Registration failed' });
+    }
   }
 });
 
@@ -67,7 +82,15 @@ app.get('/products', async (req, res) => {
 app.post('/orders', authenticateToken, async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    if (!productId || !quantity || quantity < 1) return res.status(400).json({ error: 'Valid product and quantity required' });
+    
+    // Validate inputs
+    if (!productId || !quantity) {
+      return res.status(400).json({ error: 'Product ID and quantity are required' });
+    }
+    
+    if (quantity < 1 || quantity > 1000) {
+      return res.status(400).json({ error: 'Quantity must be between 1 and 1000' });
+    }
     
     // Fetch product details from database
     const productResult = await pool.query('SELECT * FROM products WHERE id = $1', [productId]);
